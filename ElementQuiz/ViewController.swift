@@ -7,28 +7,17 @@
 
 import UIKit
 
+enum State {
+    case question
+    case answer
+}
+
 enum Mode {
     case flashCard
     case quiz
 }
 
 class ViewController: UIViewController {
-
-    @IBOutlet weak var modeSelector: UISegmentedControl!
-    @IBOutlet weak var textField: UITextField!
-    @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var answerLabel: UILabel!
-    @IBAction func showAnswer(_ sender: Any) {
-        answerLabel.text = elementList[currentElementIndex]
-    }
-    @IBAction func next(_ sender: Any) {
-        currentElementIndex += 1
-        if currentElementIndex >= elementList.count {
-            currentElementIndex = 0
-        }
-        
-        updateElement()
-    }
     
     let elementList = ["Carbono", "Ouro", "Cloro", "Sódio"]
     
@@ -36,19 +25,63 @@ class ViewController: UIViewController {
     
     var mode: Mode = .flashCard
     
+    var state: State = .question
+    
+
+    @IBOutlet weak var modeSelector: UISegmentedControl!
+    @IBOutlet weak var textField: UITextField!
+    @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var answerLabel: UILabel!
+    @IBAction func showAnswer(_ sender: Any) {
+        state = .answer
+        
+        updateUI()
+    }
+    @IBAction func next(_ sender: Any) {
+        currentElementIndex += 1
+        if currentElementIndex >= elementList.count {
+            currentElementIndex = 0
+        }
+        
+        state = .question
+        
+        updateUI()
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        updateElement()
+        updateUI()
     }
     
-    func updateElement() {
+    // Atualiza a UI do app no modo ficha de estudo
+    func updateFlashCardUI() {
         let elementName = elementList[currentElementIndex]
         let image = UIImage(named: elementName)
         imageView.image = image
         
-        answerLabel.text = "?"
+        if state == .answer {
+            answerLabel.text = elementName
+        }else{
+            answerLabel.text = "?"
+        }
+    }
+    
+    // Atualiza a UI do app no modo teste
+    func updateQuizUI() {
+        
+    }
+    
+    // Atualiza a UI do app com base no seu modo e estado.
+    func updateUI() {
+        switch mode {
+        case .flashCard:
+            updateFlashCardUI()
+        case .quiz:
+            updateQuizUI()
+        }
     }
 
 
