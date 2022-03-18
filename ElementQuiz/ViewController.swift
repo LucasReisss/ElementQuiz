@@ -23,7 +23,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     var currentElementIndex = 0
     
-    var mode: Mode = .flashCard
+    var mode: Mode = .flashCard {
+        didSet {
+            updateUI()
+        }
+    }
     
     var state: State = .question
     
@@ -51,7 +55,15 @@ class ViewController: UIViewController, UITextFieldDelegate {
         
         updateUI()
     }
-    
+                       
+    @IBAction func switchModes(_ sender: Any) {
+        if modeSelector.selectedSegmentIndex == 0 {
+            mode = .flashCard
+        }else {
+            mode = .quiz
+        }
+    }
+                       
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,7 +87,16 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     // Atualiza a UI do app no modo teste
     func updateQuizUI() {
-        
+        switch state {
+        case .question:
+            answerLabel.text = ""
+        case .answer:
+            if answerIsCorrect{
+                answerLabel.text = "Correto"
+            }else{
+                answerLabel.text = "❌"
+            }
+        }
     }
     
     // Atualiza a UI do app com base no seu modo e estado.
@@ -106,6 +127,12 @@ class ViewController: UIViewController, UITextFieldDelegate {
         state = .answer
         
         updateUI()
+        
+        if answerIsCorrect {
+            print("Correto")
+        }else {
+            print("❌")
+        }
         
         return true
     }
