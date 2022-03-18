@@ -17,7 +17,7 @@ enum Mode {
     case quiz
 }
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITextFieldDelegate {
     
     let elementList = ["Carbono", "Ouro", "Cloro", "Sódio"]
     
@@ -26,6 +26,10 @@ class ViewController: UIViewController {
     var mode: Mode = .flashCard
     
     var state: State = .question
+    
+    //Estado específico de teste
+    var answerIsCorrect = false
+    var correctAnswerCount = 0
     
 
     @IBOutlet weak var modeSelector: UISegmentedControl!
@@ -82,6 +86,28 @@ class ViewController: UIViewController {
         case .quiz:
             updateQuizUI()
         }
+    }
+    
+    //Executa após o usuário pressionar a tecla Return no telado
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        // Pega o texto do campo de texto
+        let textFieldContents = textField.text!
+        
+        // Determina se o usuário rspondeu corretamente e atualiza o estado de teste
+        if textFieldContents.lowercased() == elementList[currentElementIndex].lowercased() {
+            answerIsCorrect = true
+            correctAnswerCount += 1
+        }else {
+            answerIsCorrect = false
+        }
+        
+        // O aplicativo agora deve mostrar a resposta ao usuário
+        
+        state = .answer
+        
+        updateUI()
+        
+        return true
     }
 
 
