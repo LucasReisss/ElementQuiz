@@ -73,11 +73,13 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }
     
     // Atualiza a UI do app no modo ficha de estudo
-    func updateFlashCardUI() {
-        let elementName = elementList[currentElementIndex]
-        let image = UIImage(named: elementName)
-        imageView.image = image
+    func updateFlashCardUI(elementName: String) {
         
+        // Campo de texto e teclado
+        textField.isHidden = true
+        textField.resignFirstResponder()
+        
+        // Rótulo da resposta
         if state == .answer {
             answerLabel.text = elementName
         }else{
@@ -86,7 +88,18 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }
     
     // Atualiza a UI do app no modo teste
-    func updateQuizUI() {
+    func updateQuizUI(elementName: String) {
+        // Campo de texto e teclado
+        textField.isHidden = false
+        switch state {
+        case .question:
+            textField.text = ""
+            textField.becomeFirstResponder()
+        case .answer:
+            textField.resignFirstResponder()
+        }
+        
+        // Rótulo de resposta
         switch state {
         case .question:
             answerLabel.text = ""
@@ -101,11 +114,19 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     // Atualiza a UI do app com base no seu modo e estado.
     func updateUI() {
+        
+        //Código compartilhado: atualização de imagem
+        let elementName = elementList[currentElementIndex]
+        let image = UIImage(named: elementName)
+        imageView.image = image
+        
+        //As atualizações de UI de um modo específico se dividem em dois
+        // métodos para facilitar a leitura.
         switch mode {
         case .flashCard:
-            updateFlashCardUI()
+            updateFlashCardUI(elementName: elementName)
         case .quiz:
-            updateQuizUI()
+            updateQuizUI(elementName: elementName)
         }
     }
     
