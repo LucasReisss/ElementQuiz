@@ -10,6 +10,7 @@ import UIKit
 enum State {
     case question
     case answer
+    case score
 }
 
 enum Mode {
@@ -49,6 +50,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
         currentElementIndex += 1
         if currentElementIndex >= elementList.count {
             currentElementIndex = 0
+            if mode == .quiz {
+                state = .score
+                updateUI()
+                return
+            }
         }
         
         state = .question
@@ -97,6 +103,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
             textField.becomeFirstResponder()
         case .answer:
             textField.resignFirstResponder()
+        case .score:
+            textField.isHidden = true
+            textField.resignFirstResponder()
         }
         
         // Rótulo de resposta
@@ -109,6 +118,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
             }else{
                 answerLabel.text = "❌"
             }
+        case .score:
+            answerLabel.text = ""
+            print("Your score is \(correctAnswerCount) out of \(elementList.count).")
         }
     }
     
