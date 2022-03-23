@@ -91,10 +91,14 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }else{
             answerLabel.text = "?"
         }
+        
+        //Controle segmentado
+        modeSelector.selectedSegmentIndex = 0
     }
     
     // Atualiza a UI do app no modo teste
     func updateQuizUI(elementName: String) {
+        
         // Campo de texto e teclado
         textField.isHidden = false
         switch state {
@@ -125,6 +129,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
         if state == .score {
             displayScoreAlert()
         }
+        
+        //Controle segmentado
+        modeSelector.selectedSegmentIndex = 1
         
     }
     
