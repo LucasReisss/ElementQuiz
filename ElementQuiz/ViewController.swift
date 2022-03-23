@@ -120,8 +120,12 @@ class ViewController: UIViewController, UITextFieldDelegate {
             }
         case .score:
             answerLabel.text = ""
-            print("Your score is \(correctAnswerCount) out of \(elementList.count).")
         }
+        //Exibir pontuação
+        if state == .score {
+            displayScoreAlert()
+        }
+        
     }
     
     // Atualiza a UI do app com base no seu modo e estado.
@@ -168,6 +172,20 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }
         
         return true
+    }
+    
+    //Mostrar um alerta no IOS com a pontuação do teste do usuário
+    func displayScoreAlert() {
+        let alert = UIAlertController(title: "Quiz Socore", message: "Sua pontuação é \(correctAnswerCount) de \(elementList.count).", preferredStyle: .alert)
+        
+        let dismissAction = UIAlertAction(title: "OK", style: .default, handler: scoreAlertDismissed(_:))
+        alert.addAction(dismissAction)
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func scoreAlertDismissed(_ action: UIAlertAction){
+        mode = .flashCard
     }
 
 
