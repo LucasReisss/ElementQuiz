@@ -20,12 +20,20 @@ enum Mode {
 
 class ViewController: UIViewController, UITextFieldDelegate {
     
-    let elementList = ["Carbono", "Ouro", "Cloro", "Sódio"]
+    let fixedElementList = ["Carbono", "Ouro", "Cloro", "Sódio"]
+    var elementList: [String] = []
     
     var currentElementIndex = 0
     
     var mode: Mode = .flashCard {
         didSet {
+            switch mode {
+            case .flashCard:
+                setupFlashCards()
+            case .quiz:
+                setupQuiz()
+            }
+            
             updateUI()
         }
     }
@@ -70,12 +78,14 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }
     }
                        
+    @IBOutlet weak var showAnswerButton: UIButton!
+    @IBOutlet weak var nextButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        updateUI()
+        mode = .flashCard
     }
     
     // Atualiza a UI do app no modo ficha de estudo
@@ -84,6 +94,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
         // Campo de texto e teclado
         textField.isHidden = true
         textField.resignFirstResponder()
+        
+        //Botões
+        showAnswerButton.isHidden = false
+        nextButton.isEnabled = true
+        nextButton.setTitle("Proximo elemento", for: .normal)
         
         // Rótulo da resposta
         if state == .answer {
@@ -103,9 +118,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
         textField.isHidden = false
         switch state {
         case .question:
+            textField.isEnabled = true
             textField.text = ""
             textField.becomeFirstResponder()
         case .answer:
+            textField.isEnabled = false
             textField.resignFirstResponder()
         case .score:
             textField.isHidden = true
@@ -120,7 +137,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
             if answerIsCorrect{
                 answerLabel.text = "Correto"
             }else{
-                answerLabel.text = "❌"
+                answerLabel.text = "❌\nResposta correta: " + elementName
             }
         case .score:
             answerLabel.text = ""
@@ -133,6 +150,21 @@ class ViewController: UIViewController, UITextFieldDelegate {
         //Controle segmentado
         modeSelector.selectedSegmentIndex = 1
         
+        //Botões
+        showAnswerButton.isHidden = true
+        if currentElementIndex == elementList.count - 1 {
+            nextButton.setTitle("Mostrar pontuação", for: .normal)
+        }else {
+            nextButton.setTitle("Próxima pergunta", for: .normal)
+        }
+        switch state {
+        case .question:
+            nextButton.isEnabled = false
+        case .answer:
+            nextButton.isEnabled = true
+        case .score:
+            nextButton.isEnabled = false
+        }
     }
     
     // Atualiza a UI do app com base no seu modo e estado.
@@ -193,6 +225,24 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     func scoreAlertDismissed(_ action: UIAlertAction){
         mode = .flashCard
+    }
+    
+    // Abre uma nova sessão de ficha de estudo.
+    func setupFlashCards() {
+        
+        state = .question
+        currentElementIndex = 0
+        elementList = fixedElementList
+        
+    }
+    
+    // Abre um novo teste.
+    func setupQuiz(){
+        state = .question
+        currentElementIndex = 0
+        answerIsCorrect = false
+        correctAnswerCount = 0
+        elementList = fixedElementList.shuffled()
     }
 
 
